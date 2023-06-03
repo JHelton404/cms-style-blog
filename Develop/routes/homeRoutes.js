@@ -1,47 +1,56 @@
 const router = require('express').Router();
 const { User, Comment, Blog } = require('../models');
-// const withAuth = require('../utils/auth')
+const passwordVerify = require('../utils/auth')
 
-router.get('/', async (req, res) => {
-  const blogData = await Blog.findAll({
-    include: {
-      model: User,
-      attributes: ["name"]
-    }
-  });
-    const blogs = blogData.map((blogData) => 
-    blogData.get({ plain: true})
-  );
-  res.render('insert', { /* logged_in: req.session.logged_in */ blogs })
+router.get('/dashboard', passwordVerify, async (req, res) => {
+  try {
+    const blogData = await Blog.findAll({
+      attributes: ['id', 'title', 'body'],
+      order: [['id', 'DESC']]
+    })
+
+    const blog = blogData.map((data) => data.get({ plain: true }))
+
+    res.render('dashboard', {
+      posts,
+      logged_in: req.session.logged_in,
+      layout: 'dashboard'
+    })
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 })
 
-router.get('/main', (req, res) => {
-  res.render('main')
+router.get('/login', (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect('/dashboard');
+    return;
+  }
+  res.render('login')
 })
 
-router.get('/dashboard/new', async (req, res) => {
-  res.render('newPost', {layout: dashboard})
+router.get('*', async (req, res) => {
+  try {
+    blogData = await Blog.findAll({
+      attributse: ['id', 'title', 'body'],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name']
+        }
+      ],
+      order: [['id', 'DESC']]
+    });
+
+    const blog = blogData.map((post) => post.toJSON());
+
+    res.render('home', {
+      posts,
+      logged_in: req.session.logged_in,
+      layout: layout
+    })
+
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 })
-
-router.get('/api/find', async (req, res) => {
-  const userPosts = await Blog.findAll(
-    {
-      where: {
-        user_id: 1
-      },
-    },
-    {
-      include: {
-        model: User,
-        attributes: ['name']
-      }
-    }
-    )
-    const posts = userPosts.map((userPost) => 
-      userPost.get({ plain: true})
-    );
-   console.log(userPosts)
-  res.json(posts)
-});
-
-module.exports = router;

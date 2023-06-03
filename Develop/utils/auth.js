@@ -5,4 +5,11 @@ async function passwordVerify(password, hash) {
   return isMatch;
 }
 
+const loggedIn = (req) => {
+  if(req.session.logged_in) {
+    return "dashboard"
+  }
+  return "main"
+}
+
 module.exports = passwordVerify
