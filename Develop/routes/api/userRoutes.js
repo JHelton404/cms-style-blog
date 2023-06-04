@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require('../../models/User');
 const passwordVerify = require('../../utils/auth');
-const auth = require('../../views/auth');
+const loggedIn = require('../../utils/auth');
 
 router.get('/', async (req, res) => {
   try {

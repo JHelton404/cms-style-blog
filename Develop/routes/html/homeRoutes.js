@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { User, Comment, Blog } = require('../models');
-const passwordVerify = require('../utils/auth')
+const { User, Comment, Blog } = require('../../models');
+const passwordVerify = require('../../utils/auth')
 
 router.get('/dashboard', passwordVerify, async (req, res) => {
   try {

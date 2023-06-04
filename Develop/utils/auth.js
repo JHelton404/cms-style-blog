@@ -12,4 +12,4 @@ const loggedIn = (req) => {
   return "main"
 }
 
-module.exports = passwordVerify
+module.exports =  passwordVerify, loggedIn
